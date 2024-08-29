@@ -321,10 +321,9 @@ Implementation:
 
 Communication: Feign Client
 Orchestration-Service : Port 8090
-      - Account-service : Port 8091
-      - Invitation-service : Port 8092
-              - Notification-service : Port 8093
-      - Order-service : Port 8094
+   ---------------------------------- Account-service : Port 8091
+   ---------------------------------- Invitation-service : Port 8092 ----------------------- Notification-service : Port 8093
+   ---------------------------------- Order-service : Port 8094
 
 java Version: 11
 Spring-boot-version: 2.6.8
