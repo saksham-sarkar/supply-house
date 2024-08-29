@@ -70,7 +70,7 @@ Deliverables:
 
 ######################################################################################################
 API Documentation
-- account-service
+- Account-Service
   - Create Account 
     - Method: POST
     - Endpoint: /account/api/create
@@ -124,7 +124,7 @@ API Documentation
     - Endpoint: /account/api/unlink-subaccount/{accountId}
     - PathVariable: String
     - Response: Boolean
-- invitation-service
+- Invitation-Service
   - Send new invitation
     - Method: POST
     - Endpoint: /invitation/api/send
@@ -169,7 +169,7 @@ API Documentation
             "acceptedAt": null,
             "declinedAt": null
             }
-- notification-service:
+- Notification-Service:
   - Send email notification
     - Method: POST
     - Endpoint: /notification/api/send-mail
@@ -185,13 +185,13 @@ API Documentation
           "invitationToken": "token123"
           }
     - Response: String
-- order-service:
-  - has placed 10 orders
+- Order-Service:
+  - Has placed 10 orders
     - Method: GET
     - Endpoint: /orders/api/has-placed-ten-orders/{accountId}
     - PathVariable: String
     - Response: Boolean
-  - fetch all orders 
+  - Fetch all orders 
     - Method: GET
     - Endpoint: /orders/api/fetch-all/{accountId}
     - PathVariable: String
@@ -203,7 +203,7 @@ API Documentation
               "orderDate": "2024-08-28"
               }
             ]
-  - fetch all orders after given date
+  - Fetch all orders after given date
     - Method: GET
     - Endpoint: /orders/api/fetch?accountId={accountId}&orderDate={orderDate}
     - RequestParam: String, String
@@ -215,7 +215,7 @@ API Documentation
               "orderDate": "2024-08-28"
               }
             ]
-- orchestration-service:
+- Orchestration-Service:
   - Upgrade Account
     - Method: POST
     - Endpoint: /orchestration/api/upgrade-account?accountId={accountId}
@@ -284,27 +284,27 @@ API Documentation
 
 ###################################################################################################
 Database Schema: Used In-memory database h2
-  - accountdb:
-    - Table: account
+  - ACCOUNTDB:
+    - Table: ACCOUNT
       - columns: account_id(Bigint) not null primary key, email(varchar) not null, creation_date(datetime) not null, 
         last_updated(datetime) not null, account_link_date(datetime) nullable, shareFullHistory(boolean), 
       businessOwner(boolean), business_owner_id(Bigint)
-  - invitationdb:
-    - Table: invitation
+  - INVITATIONDB:
+    - Table: INVITATION
       - columns: id(Bigint) not null primary key, business_owner_id(Bigint) not null, sub_account_id(Bigint) not null, 
       invitation_token(varchar) unique not null, sender_email(varchar) not null, recipient_email(varchar) not null, 
       sent_at(datetime) not null, accepted_at(datetime), declined_at(datetime), status(varchar) not null
-  - ordersdb:
-    - Table: orders
+  - ORDERSDB:
+    - Table: ORDERS
       - columns: order_id(Bigint) not null primary key, account_id(Bigint) not null, order_date(datetime) not null
-  - notificationdb
-    - Table: notification
+  - NOTIFICATIONDB
+    - Table: NOTIFICATION
       - columns: id(Bigint) not null primary key, sender_id(Bigint) not null, recipient_id(Bigint) not null,
       sender_email(varchar) not null, recipient_email(varchar) not null, type(enum) not null, content(varchar) not null
 
 ##############################################################################################################################
 Implementation:
-- Supplyhouse is a multimodule service applications, having different microservices interacting 
+- Supplyhouse is a multi-module service application, having different microservices interacting 
 - via a common microservice - orchestration-service
 - Orchestration service initiates the  interaction with other service via Feign client.
 - Application is Synchronous as we have the api for communication with other services.
@@ -320,7 +320,7 @@ Implementation:
     - testGetSubAccountOrderPartialHistory
 
 Communication: Feign Client
-Orchestration-service : Port 8090
+Orchestration-Service : Port 8090
       - Account-service : Port 8091
       - Invitation-service : Port 8092
               - Notification-service : Port 8093
