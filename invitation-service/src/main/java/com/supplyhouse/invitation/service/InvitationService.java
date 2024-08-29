@@ -1,6 +1,7 @@
 package com.supplyhouse.invitation.service;
 
 import com.supplyhouse.invitation.client.NotificationServiceClient;
+import com.supplyhouse.invitation.exception.InvitationServiceException;
 import com.supplyhouse.invitation.model.dto.NotificationDTO;
 import com.supplyhouse.invitation.repository.InvitationRepository;
 import com.supplyhouse.invitation.model.entity.Invitation;
@@ -8,6 +9,7 @@ import com.supplyhouse.invitation.model.enums.InvitationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,10 +28,6 @@ public class InvitationService {
         invitation.setStatus(InvitationStatus.PENDING);
         Invitation savedInvitation = invitationRepository.save(invitation);
 
-        if (savedInvitation==null) {
-            throw new RuntimeException("Invitation creation failed.");
-        }
-
         NotificationDTO notificationDTO = NotificationDTO.builder()
                 .senderId(String.valueOf(invitation.getBusinessOwnerId()))
                 .recipientId(String.valueOf(invitation.getSubAccountId()))
@@ -41,15 +39,21 @@ public class InvitationService {
     }
 
     public String acceptInvitation(String token) {
-        Invitation invitation = invitationRepository.findByInvitationToken(token).orElseThrow();
+        Invitation invitation = invitationRepository.findByInvitationToken(token)
+                .orElseThrow(() -> new InvitationServiceException("Invitation to be accepted not found for token = "
+                        + token));
         invitation.setStatus(InvitationStatus.ACCEPTED);
+        invitation.setAcceptedAt(LocalDateTime.now());
         invitationRepository.save(invitation);
         return "Invitation accepted!";
     }
 
     public String declineInvitation(String token) {
-        Invitation invitation = invitationRepository.findByInvitationToken(token).orElseThrow();
+        Invitation invitation = invitationRepository.findByInvitationToken(token)
+                .orElseThrow(() -> new InvitationServiceException("Invitation to be declined not found for token = "
+                        + token));
         invitation.setStatus(InvitationStatus.DECLINED);
+        invitation.setDeclinedAt(LocalDateTime.now());
         invitationRepository.save(invitation);
         return "Invitation declined!";
     }

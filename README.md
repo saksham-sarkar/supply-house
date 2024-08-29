@@ -307,10 +307,11 @@ Implementation:
 - Supplyhouse is a multi-module service application, having different microservices interacting 
 - via a common microservice - orchestration-service
 - Orchestration service initiates the  interaction with other service via Feign client.
-- Application is Synchronous as we have the api for communication with other services.
-- We have written the integration tests in the orchestration-service module which contains all the scenarios mentioned below:
+- Application is Synchronous as I have the api for communication with other services.
+- I have written the integration tests in the orchestration-service module which contains all the scenarios mentioned below:
   - Integration Tests Scenarios:
     - testRequestUpgradeToBusinessOwner
+    - testRequestUpgradeToBusinessOwnerFailed
     - testSendInvitation
     - testAcceptInvitationAndShareFullHistory
     - testAcceptInvitationAndSharePartialHistory
@@ -325,7 +326,13 @@ Communication: Feign Client
    - Order-service : Port 8094
    - Invitation-service : Port 8092
        - Notification-service : Port 8093
+
+Execution:
+- Start all the service applications first except the Orchestration service.
+- once all the microservices are up and running, you can test the system by running the integration tests 
+- of Orchestration Service.
+- You can also test the individual services via their specific endpoints including the Orchestration service
    
 
-java Version: 11
-Spring-boot-version: 2.6.8
+- Java Version: 11
+- Spring-boot-version: 2.6.8

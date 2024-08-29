@@ -3,6 +3,7 @@ package com.supplyhouse.orchestration.service;
 import com.supplyhouse.orchestration.client.AccountServiceClient;
 import com.supplyhouse.orchestration.client.InvitationServiceClient;
 import com.supplyhouse.orchestration.client.OrderServiceClient;
+import com.supplyhouse.orchestration.exception.OrchestrationServiceException;
 import com.supplyhouse.orchestration.model.dto.AccountDTO;
 import com.supplyhouse.orchestration.model.dto.InvitationDTO;
 import com.supplyhouse.orchestration.model.dto.LinkSubAccountDTO;
@@ -10,7 +11,6 @@ import com.supplyhouse.orchestration.model.dto.OrderDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -31,19 +31,22 @@ public class OrchestrationService {
         if (hasPlacedTenOrders) {
             return accountServiceClient.upgradeAccountToBusinessOwner(accountId);
         }
-        throw new RuntimeException("Upgrade failed. Not enough orders.");
+        throw new OrchestrationServiceException("Account with accountId = " + accountId + " " +
+                "do not have enough orders.Upgrade failed");
     }
 
     public String sendInvitation(String businessOwnerId, String subAccountId) {
         // Check if the subaccount is already linked to another business owner
         boolean isLinked = accountServiceClient.isSubaccountLinked(subAccountId);
         if (isLinked) {
-            throw new IllegalStateException("Subaccount is already linked to another business owner.");
+            throw new OrchestrationServiceException("Subaccount with accountId = " + subAccountId +
+                    " is already linked to another business owner.");
         }
 
         AccountDTO businessOwnerAccount = accountServiceClient.getAccount(String.valueOf(businessOwnerId));
         if(!businessOwnerAccount.isBusinessOwner()) {
-            throw new IllegalStateException("Not a BusinessOwner");
+            throw new OrchestrationServiceException("Account with accountId = " + businessOwnerId +
+                    " is not a BusinessOwner");
         }
         AccountDTO subAccount = accountServiceClient.getAccount(String.valueOf(subAccountId));
 
@@ -63,7 +66,7 @@ public class OrchestrationService {
         InvitationDTO invitationDTO = invitationServiceClient.getInvitationByToken(invitationToken);
 
         if (invitationDTO == null) {
-            throw new IllegalArgumentException("Invalid invitation token.");
+            throw new OrchestrationServiceException("Invalid invitation token = " + invitationToken);
         }
 
         String invitationStatusMessage;
@@ -84,7 +87,8 @@ public class OrchestrationService {
         AccountDTO subAccount = accountServiceClient.getAccount(subAccountId);
         if (subAccount.getBusinessOwnerAccountId()==null ||
                 !subAccount.getBusinessOwnerAccountId().equals(businessOwnerAccount.getAccountId())) {
-            throw new RuntimeException("Business Owner Account not Linked");
+            throw new OrchestrationServiceException("Business Owner Account with accountId = " + businessOwnerId +
+                    " not Linked with subaccount with accountId = " + subAccountId);
         }
         if (subAccount.isShareFullHistory()) {
             // Fetch all orders for the subaccount
@@ -101,7 +105,8 @@ public class OrchestrationService {
         AccountDTO subAccount = accountServiceClient.getAccount(subAccountId);
         if (businessOwnerAccount.getSubAccountIds().isEmpty() ||
                 !subAccount.getBusinessOwnerAccountId().equals(businessOwnerAccount.getAccountId())) {
-            throw new RuntimeException("Business Owner Account not Linked");
+            throw new OrchestrationServiceException("Business Owner Account with accountId = " + businessOwnerId +
+                    " not Linked with subaccount with accountId = " + subAccountId);
         }
         return accountServiceClient.unlinkSubaccount(subAccountId);
     }

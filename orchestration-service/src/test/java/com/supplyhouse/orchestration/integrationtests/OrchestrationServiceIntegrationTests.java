@@ -1,5 +1,6 @@
 package com.supplyhouse.orchestration.integrationtests;
 
+import com.supplyhouse.orchestration.exception.OrchestrationServiceException;
 import com.supplyhouse.orchestration.model.dto.AccountDTO;
 import com.supplyhouse.orchestration.model.dto.InvitationDTO;
 import com.supplyhouse.orchestration.model.dto.OrderDTO;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -73,6 +75,14 @@ public class OrchestrationServiceIntegrationTests {
     public void testRequestUpgradeToBusinessOwner() {
         String result = orchestrationService.upgradeAccountToBusinessOwner(businessOwner.getAccountId());
         assertThat(result).isEqualTo("Account upgraded successfully");
+    }
+
+    @Test
+    public void testRequestUpgradeToBusinessOwnerFailed() {
+        OrchestrationServiceException thrown = assertThrows(OrchestrationServiceException.class, () -> {
+            orchestrationService.upgradeAccountToBusinessOwner(subAccount2.getAccountId());
+        });
+        assertTrue(thrown.getMessage().contains("do not have enough orders.Upgrade failed"));
     }
 
     @Test

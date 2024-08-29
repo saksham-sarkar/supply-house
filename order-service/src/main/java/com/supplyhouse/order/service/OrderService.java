@@ -1,5 +1,6 @@
 package com.supplyhouse.order.service;
 
+import com.supplyhouse.order.exception.OrderServiceException;
 import com.supplyhouse.order.model.entity.Order;
 import com.supplyhouse.order.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ public class OrderService {
     }
 
     public Order getOrder(Long orderId) {
-        return orderRepository.findById(orderId).orElseThrow();
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderServiceException("Order not found for orderId = " + orderId));
     }
 }
