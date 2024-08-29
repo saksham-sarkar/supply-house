@@ -3,7 +3,7 @@ package com.supplyhouse.orchestration.controller;
 import com.supplyhouse.orchestration.model.dto.AccountDTO;
 import com.supplyhouse.orchestration.model.dto.LinkSubAccountDTO;
 import com.supplyhouse.orchestration.model.dto.OrderDTO;
-import com.supplyhouse.orchestration.model.request.RespondToInvitation;
+import com.supplyhouse.orchestration.model.dto.RespondToInvitationDTO;
 import com.supplyhouse.orchestration.service.OrchestrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -40,12 +40,12 @@ public class OrchestrationController {
     }
 
     @PostMapping("/respond-to-invitation")
-    public String respondToInvitation(@RequestBody RespondToInvitation request) {
+    public String respondToInvitation(@RequestBody RespondToInvitationDTO dto) {
         return orchestrationService.respondToInvitation(
-                request.getSubAccountId(),
-                request.getInvitationToken(),
-                request.isAccept(),
-                request.isShareFullHistory());
+                dto.getSubAccountId(),
+                dto.getInvitationToken(),
+                dto.isAccept(),
+                dto.isShareFullHistory());
     }
 
     @PostMapping("/get-order-history")
