@@ -333,6 +333,10 @@ Execution:
 - of Orchestration Service.
 - You can also test the individual services via their specific endpoints including the Orchestration service
    
-
+Tools/Dependencies Used:
 - Java Version: 11
 - Spring-boot-version: 2.6.8
+- Junit 5
+- spring-boot-starter-jpa
+- feign client
+- h2 database
